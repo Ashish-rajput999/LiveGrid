@@ -1,0 +1,44 @@
+{
+  "GEN-1": [
+    "SUB-1",
+    "GEN-2"
+  ],
+  "GEN-2": [
+    "GEN-1",
+    "SUB-2"
+  ],
+  "SUB-1": [
+    "GEN-1",
+    "SUB-2",
+    "SUB-3",
+    "DIST-1"
+  ],
+  "SUB-2": [
+    "GEN-2",
+    "SUB-1",
+    "SUB-3",
+    "DIST-3"
+  ],
+  "SUB-3": [
+    "SUB-1",
+    "SUB-2",
+    "DIST-4",
+    "DIST-5"
+  ],
+  "DIST-1": [
+    "SUB-1",
+    "DIST-2"
+  ],
+  "DIST-2": [
+    "DIST-1"
+  ],
+  "DIST-3": [
+    "SUB-2"
+  ],
+  "DIST-4": [
+    "SUB-3"
+  ],
+  "DIST-5": [
+    "SUB-3"
+  ]
+}
