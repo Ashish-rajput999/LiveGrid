@@ -1,0 +1,62 @@
+# ─────────────────────────────────────────────────────────────
+#  LiveGrid — Docker Compose
+#  Starts backend + frontend together.
+#  Usage:  docker compose up --build
+#  Stop:   docker compose down
+# ─────────────────────────────────────────────────────────────
+version: "3.9"
+
+networks:
+  livegrid:
+    driver: bridge
+
+services:
+
+  # ── FastAPI + GNN Simulation Backend ────────────────────────
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: livegrid-backend
+    ports:
+      - "8000:8000"
+    environment:
+      - PYTHONPATH=/app
+    # Keep logs visible in docker compose logs
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/grid"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+    networks:
+      - livegrid
+    restart: unless-stopped
+
+  # ── Next.js 14 Dashboard ─────────────────────────────────────
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: livegrid-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      # Tell Next.js to accept connections from any host inside Docker
+      - HOSTNAME=0.0.0.0
+    depends_on:
+      backend:
+        condition: service_healthy
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - livegrid
+    restart: unless-stopped

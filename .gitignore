@@ -1,0 +1,59 @@
+# ─────────────────────────────────────────────────────────────
+#  LiveGrid — .gitignore
+# ─────────────────────────────────────────────────────────────
+
+# ── Dependencies ─────────────────────────────────────────────────────
+node_modules/
+.venv/
+venv/
+env/
+
+# ── Build & Cache ────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyd
+.Python
+frontend/.next/
+.next/
+out/
+build/
+dist/
+*.egg-info/
+
+# ── Environment Variables ────────────────────────────────────────────
+.env
+.env.*
+*.env
+
+# ── Logs & Output ────────────────────────────────────────────────────
+logs/
+*.log
+backend.log
+output/
+
+# ── LiveGrid Project Structure Rules ──────────────────────────────────
+# Force-track these specific model binaries (do NOT add generic .pt)
+!backend/models/gnn_model.pt
+!backend/models/model.pt
+!backend/models/gnn_scaler.pkl
+!backend/models/neighbor_map.json
+
+# ── macOS system files ───────────────────────────────────────────────
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# ── Editor / IDE ─────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ── Testing / Coverage ───────────────────────────────────────────────
+.pytest_cache/
+htmlcov/
+.coverage
+*.cover
+coverage.xml

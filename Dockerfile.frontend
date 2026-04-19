@@ -1,0 +1,21 @@
+# ─────────────────────────────────────────────────────────────
+#  LiveGrid — Frontend Dockerfile
+#  Builds and serves the Next.js 14 dashboard.
+#  Context: project root (docker build -f Dockerfile.frontend .)
+# ─────────────────────────────────────────────────────────────
+FROM node:20-slim
+
+WORKDIR /app
+
+# Copy package files and install first (layer-cache friendly)
+COPY frontend/package.json frontend/package-lock.json* ./
+RUN npm install --silent
+
+# Copy the rest of the frontend source
+COPY frontend/ .
+
+EXPOSE 3000
+
+# Next.js dev server — the backend WebSocket URL is picked up
+# at runtime via the browser, so no build-time env needed.
+CMD ["npm", "run", "dev"]

@@ -1,0 +1,31 @@
+# ─────────────────────────────────────────────────────────────
+#  LiveGrid — Backend Dockerfile
+#  Builds the FastAPI + simulator service.
+#  Context: project root (docker build -f Dockerfile.backend .)
+# ─────────────────────────────────────────────────────────────
+FROM python:3.11-slim
+
+# System-level dependencies for torch / numpy / pandas builds
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        build-essential \
+        curl \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Copy and install Python dependencies first (layer-cache friendly)
+COPY backend/requirements.txt ./backend/requirements.txt
+RUN pip install --no-cache-dir --upgrade pip \
+    && pip install --no-cache-dir -r backend/requirements.txt \
+    && pip install --no-cache-dir torch-geometric || true
+
+# Copy the full project
+COPY . .
+
+# Ensure the project root is on the Python path so that
+# `from livegrid...` and `from backend...` both resolve
+ENV PYTHONPATH=/app
+
+EXPOSE 8000
+
+CMD ["uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "8000"]
