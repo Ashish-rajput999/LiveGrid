@@ -3,7 +3,8 @@ fastapi>=0.104.0
 uvicorn[standard]>=0.24.0
 websockets>=12.0
 
-# ML dependencies (same as root requirements.txt)
+# ML dependencies — CPU-only torch to keep the Docker image lean on Render
+--extra-index-url https://download.pytorch.org/whl/cpu
 torch>=2.0.0
 pandas>=2.0.0
 numpy>=1.24.0

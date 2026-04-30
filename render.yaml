@@ -1,0 +1,22 @@
+# ─────────────────────────────────────────────────────────────
+#  LiveGrid — Render Blueprint
+#  Defines the backend Web Service configuration.
+#  Render reads this file automatically when you click
+#  "New Blueprint Instance" in the Render dashboard.
+# ─────────────────────────────────────────────────────────────
+services:
+  - type: web
+    name: livegrid-backend
+    runtime: docker
+    dockerfilePath: ./Dockerfile.backend
+    # Build from project root so backend/ can import livegrid/ and predict.py
+    rootDir: .
+    plan: free          # change to "starter" ($7/mo) for always-on
+    healthCheckPath: /api/grid
+    envVars:
+      - key: PYTHONPATH
+        value: /app
+      # Set this to your Vercel deployment URL after frontend is deployed.
+      # Example: https://livegrid.vercel.app
+      - key: FRONTEND_ORIGINS
+        value: https://livegrid.vercel.app

@@ -5,7 +5,7 @@
 # ─────────────────────────────────────────────────────────────
 FROM python:3.11-slim
 
-# System-level dependencies for torch / numpy / pandas builds
+# System-level dependencies for numpy / pandas / scikit-learn builds
 RUN apt-get update && apt-get install -y --no-install-recommends \
         build-essential \
         curl \
@@ -13,13 +13,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 WORKDIR /app
 
-# Copy and install Python dependencies first (layer-cache friendly)
+# Copy requirements first (layer-cache friendly)
 COPY backend/requirements.txt ./backend/requirements.txt
+
+# Install CPU-only torch to keep the image lean on Render (~200MB vs ~800MB)
 RUN pip install --no-cache-dir --upgrade pip \
+    && pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu \
     && pip install --no-cache-dir -r backend/requirements.txt \
     && pip install --no-cache-dir torch-geometric || true
 
-# Copy the full project
+# Copy the full project (livegrid/, backend/, predict.py, train_model.py …)
 COPY . .
 
 # Ensure the project root is on the Python path so that

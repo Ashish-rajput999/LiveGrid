@@ -55,9 +55,26 @@ from train_model import FEATURE_COLUMNS, SEQUENCE_LENGTH
 
 app = FastAPI(title="LiveGrid Real-Time API", version="3.0.0")
 
+
+def _build_cors_origins() -> list[str]:
+    """Build allowed origins list from env vars + sensible defaults."""
+    origins = [
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+    ]
+    # Allow any Vercel preview/production URL
+    origins.append("https://livegrid.vercel.app")
+    # Allow exact URL(s) provided via FRONTEND_ORIGINS (comma-separated)
+    raw = os.getenv("FRONTEND_ORIGINS", "").strip()
+    if raw:
+        extra = [o.strip() for o in raw.split(",") if o.strip()]
+        origins.extend(extra)
+    return list(dict.fromkeys(origins))  # deduplicate, preserve order
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
+    allow_origins=_build_cors_origins(),
+    allow_origin_regex=r"https://.*\.vercel\.app",  # all Vercel preview URLs
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -399,8 +416,8 @@ async def simulation_loop() -> None:
         state.gnn_scaler = gnn_scaler
         state.model_type = "GNN"
         print("✅ GNN model loaded — using Graph Attention Network")
-    except FileNotFoundError:
-        print("ℹ️  GNN model not found, trying LSTM...")
+    except Exception as e:
+        print(f"ℹ️  GNN unavailable ({e}), trying LSTM...")
         state.model_type = "LSTM"
 
     # Load LSTM as fallback (or always, if GNN unavailable)

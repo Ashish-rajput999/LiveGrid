@@ -1,21 +1,38 @@
 # ─────────────────────────────────────────────────────────────
 #  LiveGrid — Frontend Dockerfile
-#  Builds and serves the Next.js 14 dashboard.
+#  Builds and serves the Next.js 14 dashboard (production build).
 #  Context: project root (docker build -f Dockerfile.frontend .)
+#  For Vercel, this file is NOT used — Vercel builds automatically.
 # ─────────────────────────────────────────────────────────────
-FROM node:20-slim
+FROM node:20-slim AS builder
 
 WORKDIR /app
 
 # Copy package files and install first (layer-cache friendly)
 COPY frontend/package.json frontend/package-lock.json* ./
-RUN npm install --silent
+RUN npm ci --silent
 
 # Copy the rest of the frontend source
 COPY frontend/ .
 
-EXPOSE 3000
+# Build the production bundle
+# NEXT_PUBLIC_BACKEND_WS_URL must be passed at build time via --build-arg
+ARG NEXT_PUBLIC_BACKEND_WS_URL=ws://localhost:8000/ws/live
+ENV NEXT_PUBLIC_BACKEND_WS_URL=$NEXT_PUBLIC_BACKEND_WS_URL
 
-# Next.js dev server — the backend WebSocket URL is picked up
-# at runtime via the browser, so no build-time env needed.
-CMD ["npm", "run", "dev"]
+RUN npm run build
+
+# ── Production runner ────────────────────────────────────────
+FROM node:20-slim AS runner
+
+WORKDIR /app
+ENV NODE_ENV=production
+
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
+
+EXPOSE 3000
+ENV PORT=3000
+
+CMD ["node", "server.js"]

@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import StatsBar from "@/components/StatsBar";
 import AlertFeed, { AlertItem } from "@/components/AlertFeed";
 import GridMap, { GridNode } from "@/components/GridMap";
+import { WS_URL } from "@/lib/runtimeConfig";
 
 // ── Types ────────────────────────────────────────────────────────────
 
@@ -18,7 +19,6 @@ interface GridSnapshot {
 
 // ── Constants ────────────────────────────────────────────────────────
 
-const WS_URL = "ws://localhost:8000/ws/live";
 const RECONNECT_DELAY = 3000;
 const MAX_ALERTS = 20;
 
