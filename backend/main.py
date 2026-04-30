@@ -74,8 +74,8 @@ def _build_cors_origins() -> list[str]:
 app.add_middleware(
     CORSMiddleware,
     allow_origins=_build_cors_origins(),
-    allow_origin_regex=r"https://.*\.vercel\.app",  # all Vercel preview URLs
-    allow_credentials=True,
+    allow_origin_regex=r"https://.*\.vercel\.app",  # all *.vercel.app URLs
+    allow_credentials=False,  # no cookies/auth — False lets the regex work correctly
     allow_methods=["*"],
     allow_headers=["*"],
 )
