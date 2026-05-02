@@ -3,7 +3,7 @@
 import React, { useRef, useEffect, useCallback, useState } from "react";
 import * as d3 from "d3";
 
-const API_BASE = "http://localhost:8000";
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
 
 // ── Types ────────────────────────────────────────────────────────────
 
@@ -287,7 +287,7 @@ export default function GridMap({ nodes, edges, onNodeClick, activeScenario }: G
                 explainCache.current.set(d.id, data.explanation.primary_driver);
               }
             })
-            .catch(() => {});
+            .catch(() => { });
         }
       })
       .on("mousemove", function (event: MouseEvent) {
@@ -602,9 +602,8 @@ export default function GridMap({ nodes, edges, onNodeClick, activeScenario }: G
             {simResult.cascade_sequence.map((step) => (
               <div
                 key={step.step}
-                className={`flex items-start gap-2 text-xs transition-opacity duration-300 ${
-                  simHighlighted.has(step.node_id) ? "opacity-100" : "opacity-30"
-                }`}
+                className={`flex items-start gap-2 text-xs transition-opacity duration-300 ${simHighlighted.has(step.node_id) ? "opacity-100" : "opacity-30"
+                  }`}
               >
                 <span className="text-red-400 font-mono shrink-0">{step.step}.</span>
                 <span className="font-semibold text-white shrink-0">{step.node_id}</span>

@@ -2,7 +2,7 @@
 
 import React, { useRef, useEffect, useState, useCallback } from "react";
 
-const API_BASE = "http://localhost:8000";
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
 
 export interface AlertItem {
   id: string;
@@ -32,17 +32,17 @@ interface AlertFeedProps {
 function getLevelEmoji(level: AlertItem["level"]): string {
   switch (level) {
     case "CRITICAL": return "🔴";
-    case "WARNING":  return "🟡";
-    case "FAILED":   return "⚫";
-    case "RECOVERED":return "🟢";
+    case "WARNING": return "🟡";
+    case "FAILED": return "⚫";
+    case "RECOVERED": return "🟢";
   }
 }
 
 function getLevelColor(level: AlertItem["level"]): string {
   switch (level) {
-    case "CRITICAL":  return "border-red-500/30 bg-red-500/5";
-    case "WARNING":   return "border-yellow-500/30 bg-yellow-500/5";
-    case "FAILED":    return "border-gray-500/30 bg-gray-500/5";
+    case "CRITICAL": return "border-red-500/30 bg-red-500/5";
+    case "WARNING": return "border-yellow-500/30 bg-yellow-500/5";
+    case "FAILED": return "border-gray-500/30 bg-gray-500/5";
     case "RECOVERED": return "border-green-500/30 bg-green-500/5";
   }
 }

@@ -32,8 +32,30 @@ from train_model import GridLSTM, FEATURE_COLUMNS, SEQUENCE_LENGTH
 
 # ── Constants ────────────────────────────────────────────────────────
 
-MODEL_PATH = os.path.join("output", "model.pt")
-NEIGHBOR_MAP_JSON = os.path.join("output", "neighbor_map.json")
+def _resolve_artifact_path(env_var: str, *candidates: str) -> str:
+    """
+    Resolve model artifact path from env or first existing candidate path.
+    Returns first candidate if nothing exists (for clearer downstream errors).
+    """
+    env_value = os.getenv(env_var, "").strip()
+    if env_value:
+        return env_value
+    for candidate in candidates:
+        if os.path.exists(candidate):
+            return candidate
+    return candidates[0]
+
+
+MODEL_PATH = _resolve_artifact_path(
+    "LIVEGRID_MODEL_PATH",
+    os.path.join("backend", "models", "model.pt"),
+    os.path.join("output", "model.pt"),
+)
+NEIGHBOR_MAP_JSON = _resolve_artifact_path(
+    "LIVEGRID_NEIGHBOR_MAP_PATH",
+    os.path.join("backend", "models", "neighbor_map.json"),
+    os.path.join("output", "neighbor_map.json"),
+)
 
 
 # ── Model Loading ────────────────────────────────────────────────────
@@ -118,8 +140,16 @@ def predict(
 
 # ── GNN Model (Phase 5) ────────────────────────────────────────────────
 
-GNN_MODEL_PATH = os.path.join("output", "gnn_model.pt")
-GNN_SCALER_PATH = os.path.join("output", "gnn_scaler.pkl")
+GNN_MODEL_PATH = _resolve_artifact_path(
+    "LIVEGRID_GNN_MODEL_PATH",
+    os.path.join("backend", "models", "gnn_model.pt"),
+    os.path.join("output", "gnn_model.pt"),
+)
+GNN_SCALER_PATH = _resolve_artifact_path(
+    "LIVEGRID_GNN_SCALER_PATH",
+    os.path.join("backend", "models", "gnn_scaler.pkl"),
+    os.path.join("output", "gnn_scaler.pkl"),
+)
 
 
 def load_gnn_model(
