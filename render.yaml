@@ -19,4 +19,4 @@ services:
       # Set this to your Vercel deployment URL after frontend is deployed.
       # Example: https://livegrid.vercel.app
       - key: FRONTEND_ORIGINS
-        value: https://livegrid.vercel.app
+        value: https://live-grid-nu.vercel.app
